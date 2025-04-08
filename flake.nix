@@ -22,12 +22,11 @@
         windex-run = pkgs.callPackage ./windex-run/package.nix {};
       });
 
-      nixosModules = forAllSystems (system: pkgs: let
-        pkgs' = self.packages.${system};
-      in {
+      nixosModules = 
+      {
         default = self.nixosModules.windex;
-        windex = import ./windex.nix {inherit (pkgs') windex-image;};
-      });
+        windex = import ./windex.nix {inherit (self) packages;};
+      };
 
       devShells = forAllSystems (system: pkgs: {
         default = pkgs.callPackage ./shell.nix {};

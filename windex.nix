@@ -3,7 +3,7 @@
   pkgs,
   lib,
 
-  windex-image
+  packages,
 }: let
   inherit
     (lib.options)
@@ -31,13 +31,14 @@
     str
     ;
 
+  packages = packages.${builtins.currentSystem};
   cfg = config.windex;
 in {
   options.windex = {
     enable = mkEnableOption "Windex, easy windows vm manager";
     image = mkOption {
       type = package;
-      default = windex-image;
+      default = packages.windex-image;
       description = "Windows image ran by the runner";
     };
 
