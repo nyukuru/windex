@@ -4,6 +4,7 @@
   lib,
 
   packages,
+  ...
 }: let
   inherit
     (lib.options)
