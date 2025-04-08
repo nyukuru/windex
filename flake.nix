@@ -13,6 +13,9 @@
       nixpkgs.lib.genAttrs systems
         (system: (func system nixpkgs.legacyPackages.${system}));
 
+    importWith = module: attr1: attr2:
+      import module {inherit attr1;} // attr2;
+
     in {
       packages = forAllSystems (system: pkgs: let
         pkgs' = self.packages.${system};
@@ -25,7 +28,7 @@
       nixosModules = 
       {
         default = self.nixosModules.windex;
-        windex = import ./windex.nix {inherit (self) packages;};
+        windex = importWith ./windex.nix self.packages;
       };
 
       devShells = forAllSystems (system: pkgs: {
