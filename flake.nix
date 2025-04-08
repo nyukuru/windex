@@ -14,7 +14,7 @@
         (system: (func system nixpkgs.legacyPackages.${system}));
 
     importWith = module: attr1: attr2:
-      import module {inherit attr1;} // attr2;
+      import module ({inherit attr1;} // attr2);
 
     in {
       packages = forAllSystems (system: pkgs: let
