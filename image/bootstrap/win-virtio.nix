@@ -5,7 +5,7 @@
   p7zip,
 }: 
 stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "virtio-win";
+  pname = "win-virtio";
   version = "0.1.271-1";
 
   src = fetchurl {
@@ -13,7 +13,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     hash = "sha256-u+YWathqSQyu+tQ4/viqSUkmywobN/oSEpJc/YFlZCk=";
   };
 
-  unpackCmd = "7z x -y $curSrc -oout";
+  unpackCmd = "7z x -y $curSrc -oOut";
 
   nativeBuildInputs = [
     p7zip

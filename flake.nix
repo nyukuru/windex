@@ -4,31 +4,39 @@
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11-small";
 
   outputs = {nixpkgs, self, ...}: let
+
     systems = [
       "x86_64-linux"
-      "aarch64-linux"
     ];
 
     forAllSystems = func: 
       nixpkgs.lib.genAttrs systems
         (system: (func system nixpkgs.legacyPackages.${system}));
 
-    importWith = module: attr1: attr2:
-      import module ({inherit attr1;} // attr2);
-
     in {
       packages = forAllSystems (system: pkgs: let
         pkgs' = self.packages.${system};
       in {
-        windex-image = pkgs.callPackage ./image/package.nix {inherit (pkgs') virtio-drivers;};
-        virtio-drivers = pkgs.callPackage ./image/virtio-drivers.nix {};
+        # Final windows image
+        windex-image = pkgs.callPackage ./image/windex/package.nix {inherit (pkgs') bootstrap-image autounattended;};
+
+        # Intermediary drive images
+        bootstrap-image = pkgs.callPackage ./image/bootstrap/package.nix {inherit (pkgs') win-virtio win-openssh bundle-installer;};
+
+        # Bootstrapping packages
+        win-virtio = pkgs.callPackage ./image/bootstrap/win-virtio.nix {};
+        win-openssh = pkgs.callPackage ./image/bootstrap/win-openssh.nix {};
+        bundle-installer = pkgs.callPackage ./bundle-installer/package.nix {};
+        autounattended = pkgs.callPackage ./image/windex/autounattended.nix {};
+
+
+        # Extra Packages for running the image
         windex-run = pkgs.callPackage ./windex-run/package.nix {};
       });
 
-      nixosModules = 
-      {
+      nixosModules = {
         default = self.nixosModules.windex;
-        windex = importWith ./windex.nix self.packages;
+        windex = import ./windex.nix self.packages;
       };
 
       devShells = forAllSystems (system: pkgs: {

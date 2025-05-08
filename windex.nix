@@ -1,8 +1,7 @@
-{
+packages: {
   config,
   pkgs,
   lib,
-  packages,
   ...
 }: let
   inherit
@@ -51,6 +50,7 @@ in {
       user = mkOption {
         type = str;
         description = "";
+        default = "guest";
       };
 
       deviceIds = mkOption {
@@ -104,10 +104,6 @@ in {
           package = mkDefault pkgs.qemu_kvm;
           ovmf.enable = true;
         };
-
-        extraConfig = ''
-          user="${cfg.vfio.user}"
-        '';
       };
     };
 
